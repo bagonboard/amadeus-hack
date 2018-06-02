@@ -158,7 +158,7 @@ async function lower(req, res) {
     // const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
     const { origin, destination, year } = req.body;
     const months = getMonths(year);
-    const mediaMes = [];
+    const mediaMonth = [];
     // media de precios por ruta al mes
     // media de dias 
     // media de medias diarias
@@ -171,7 +171,7 @@ async function lower(req, res) {
       const departure = months[i];
       const daysInMonth = moment(departure).daysInMonth();
 
-      const dayRandom = Math.floor(Math.random() * daysInMonth);
+      const dayRandom = Math.floor(Math.random() * daysInMonth) + 1;
 
       const departureDate = `${departure}-${(dayRandom<10) ? '0'+dayRandom : dayRandom}`;
       console.log(origin, destination, departureDate);
@@ -189,17 +189,23 @@ async function lower(req, res) {
       });
       // console.log('prices', prices);
       // console.log('prices length', prices.length);
-      const media = getMedia(prices);
+
+      // max, min & media of the month/day
+      const media = getMediaMonth(prices);
       // console.log('media', media);
-      mediaMes.push(media);
-      // console.log('mediaMes', mediaMes);
+      mediaMonth.push(media);
+      // console.log('mediaMonth', mediaMonth);
     }
-    const medias = getMediaMes(mediaMes);
+      // media of the year/month
+    const mediaYear = getMediaYear(mediaMonth);
+    // console.log('mediaYear', mediaYear);
+      // const medias = getMediaMonth(mediaMonth);
     const response = {
+      months,
       origin,
       destination,
-      mediaMes,
-      mediaAno: medias,
+      mediaMonth,
+      mediaYear,
       // mediaMes: getMedia(mediaDia),
     };
     console.timeEnd("lower");
@@ -208,6 +214,35 @@ async function lower(req, res) {
     console.error('[ERROR]', error.message);
     res.status(500).end();
   }
+}
+
+function getMediaMonth(object) {
+  let total = 0;
+  let max = 0;
+  let min = 0;
+  object.forEach(item => {
+    const vaule = parseInt(item);
+    total += parseInt(vaule);
+    if (max < vaule) max = vaule;
+    if (min === 0 || min > vaule) min = vaule;
+  });
+  const totalPrice = (total / object.length).toFixed(2);
+  const result = {
+    max,
+    min,
+    media: parseInt(totalPrice),
+  }
+  return result;
+}
+
+function getMediaYear(object) {
+  let total = 0;
+  object.forEach(item => {
+    const vaule = parseInt(item.media);
+    total += vaule;
+  });
+  const result = (total / object.length).toFixed(2);
+  return parseInt(result);
 }
 
 function getMedia(object) {
