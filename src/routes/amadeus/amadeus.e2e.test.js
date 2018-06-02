@@ -96,12 +96,12 @@ describe('[e2e] /iberia', () => {
   });
 
   describe('amadeus/lower', () => {
-    it('it should POST a lower fare result', async () => {
+    it.skip('it should POST a lower fare result', async () => {
       const endpoint = 'amadeus/lower';
       const query = {
         origin     : 'MAD',
         destination: 'PAR',
-        year       : '2018'
+        year       : '2017'
         // departure  : '2018-08',
       };
       try {
@@ -118,8 +118,44 @@ describe('[e2e] /iberia', () => {
         expect(error).to.not.exist();
       }
     })
-    .timeout(120000);
+    // .timeout(120000);
+    it('it should POST a lower fare result', async () => {
+      const endpoint = 'amadeus/lowerPrices';
+      // const cities = ['BCN', 'PAR', 'LON', 'TCI'];
+      // const cities = ['NYC'];
+      // const cities = ['BRU', 'UIO'];
+      // const cities = ['DXB'];
+      const cities = ['SDQ', 'OPO'];
+      // const cities = ['BCN', 'PAR', 'LON', 'TCI', 'NYC', 'BRU', 'UIO', 'DXB', 'SDQ', 'OPO'];
+      const result = [];
+      try {
+        for (let i = 0; i < cities.length; i++) {
+          const query = {
+            origin     : 'MAD',
+            destination: cities[i],
+            year       : '2018'
+            // departure  : '2018-08',
+          };
+          const res = await chai
+            .request(URL)
+            .post(endpoint)
+            .send(query);
+          const { body } = res;
+          console.log('body', body);
+          result.push(body);
+        }
+        console.log(':: RESULT ::\n', result);
+        console.log('------------\n', result);
+        console.log(':: RESULT ::\n', JSON.stringify(result, null, 2));
+        
+      } catch (error) {
+        console.error('ERROR', error);
+        expect(error).to.not.exist();
+      }
+    })
+    .timeout(90000000);
   });
+
   // describe('/validateIberia', () => {
   //   it('it should POST to /validateIberia and return a success response', async () => {
   //     const endpoint = 'iberia/validateIberia';

@@ -20,6 +20,8 @@ module.exports = {
   chekin,
   mostTraveled,
   lower,
+  lowerPrices,
+  lowerPricesCache,
 };
 
 async function booking(req, res) {
@@ -151,6 +153,99 @@ function getMonths(year) {
   }
   return result;
 }
+
+async function lowerPricesCache(req, res) {
+  try {
+    const cache = [
+      [ 'BCN', 95, 97, 123, 99, 100, 110, 103, 99, 98, 99, 110, 109 ],
+      [ 'PAR', 174, 191, 201, 145, 148, 172, 175, 388, 408, 309, 1045, 1126 ],
+      [ 'LON', 138, 121, 161, 107, 172, 121, 124, 155, 185, 165, 986, 1572 ],
+      [ 'TCI', 161, 191, 234, 213, 170, 136, 148, 147, 129, 130, 145, 156 ],
+      [ 'NYC', 1335, 1361, 1360, 1341, 1437, 1721, 1526, 1651, 1696, 1733, 1742, 1823 ],
+      [ 'BRU', 271, 301, 458, 287, 275, 329, 428, 763, 706, 456, 1467, 1169 ],
+      [ 'UIO', 1301, 1475, 1317, 1274, 1365, 1056, 1405, 1122, 1793, 1427, 824, 2041 ],
+      [ 'DXB', 1317, 1065, 958, 1019, 1121, 1187, 1165, 0, 1175, 1431, 1457, 2558 ],
+      [ 'SDQ', 1133, 1140, 1126, 1060, 1074, 1000, 1106, 1114, 966, 1014, 1371, 1233 ],
+      [ 'OPO', 228, 234, 230, 226, 165, 401, 366, 776, 629, 255, 1671, 50 ],
+   ];
+
+    return res.status(200).json(cache);
+  } catch (error) {
+    console.error('[ERROR] lowerPricesCache', error.message);
+    res.status(500).end();
+  }
+}
+
+async function lowerPrices(req, res) {
+  try {
+    console.time("lowerPrices");
+    // const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    const { origin, destination, year } = req.body;
+    const months = getMonths(year);
+    const mediaMonth = [];
+    const response   = [];
+    response.push(destination);
+
+    for (let i = 0; i < months.length; i++) {
+      const prices = [];
+      const departure = months[i];
+      const daysInMonth = moment(departure).daysInMonth();
+
+      const dayRandom = Math.floor(Math.random() * daysInMonth) + 1;
+
+      const departureDate = `${departure}-${(dayRandom<10) ? '0'+dayRandom : dayRandom}`;
+      console.log(origin, destination, departureDate);
+      console.time("amadeus");
+      let lowFare;
+      try {
+        lowFare = await amadeus.shopping.flightOffers.get({
+          origin,
+          destination,
+          departureDate,
+        });
+      } catch (error) {
+        
+      }
+      console.timeEnd("amadeus");
+      if (lowFare) {
+        const { data } = lowFare;
+        data.forEach(item => {
+          const { services, price, pricePerAdult } = item.offerItems[0];
+          prices.push(parseInt(price.total));
+        });
+        // console.log('prices', prices);
+        // console.log('prices length', prices.length);
+  
+        // max, min & media of the month/day
+        const media = getMediaMonth(prices);
+        // console.log('media', media);
+        mediaMonth.push(media);
+        response.push(media.media);
+        console.log('mediaMonth', response);
+      } else {
+        response.push(0);        
+      }
+    }
+      // media of the year/month
+    const mediaYear = getMediaYear(mediaMonth);
+    // console.log('mediaYear', mediaYear);
+    // const medias = getMediaMonth(mediaMonth);
+    // const response = {
+    //   months,
+    //   origin,
+    //   destination,
+    //   mediaMonth,
+    //   mediaYear,
+    //   // mediaMes: getMedia(mediaDia),
+    // };
+    console.timeEnd("lowerPrices");
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error('[ERROR]', error.message);
+    res.status(500).end();
+  }
+}
+
 
 async function lower(req, res) {
   try {

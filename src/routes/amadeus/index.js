@@ -1,4 +1,4 @@
-const { booking, test, find, chekin, mostTraveled, lower } = require('./controller');
+const { booking, test, find, chekin, mostTraveled, lower, lowerPrices, lowerPricesCache } = require('./controller');
 
 module.exports = {
   booking,
@@ -7,4 +7,6 @@ module.exports = {
   chekin,
   mostTraveled,
   lower,
+  lowerPrices,
+  lowerPricesCache,
 };
