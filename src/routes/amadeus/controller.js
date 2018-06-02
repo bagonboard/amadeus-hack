@@ -20,6 +20,7 @@ module.exports = {
   lower,
   lowerPrices,
   lowerPricesCache,
+  searchFare,
 };
 
 async function test(req, res) {
@@ -261,6 +262,21 @@ async function lower(req, res) {
   } catch (error) {
     console.error('[ERROR]', error.message);
     res.status(500).end();
+  }
+}
+
+async function searchFare(req, res) {
+  try {
+    // Flight Most Searched Destinations
+    const mostFlight = await amadeus.travel.analytics.fareSearches.get({
+      origin       : 'MAD',
+      destination  : 'PAR',
+      sourceCountry: 'ES',
+      period       : '2018-08'
+    });
+    console.log('mostFlight: ', mostFlight.body);
+  } catch (error) {
+    console.error('[ERROR]', error.message);
   }
 }
 
