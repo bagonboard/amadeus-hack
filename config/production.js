@@ -6,9 +6,9 @@ module.exports = {
   amadeus: {
     clientId: 'fWiWHcG1YdGjqG0SrW4REFIJGev7amgO',
     clientSecret: '2TpoIfiJg7BeNRsz',
-    logLevel: 'debug'
+    logLevel: 'error',
   },
-  localURL : 'http://localhost:3000/',
+  localURL : `http://${process.env.HOSTNAME || "localhost"}:3000/`,
   slackWebhooks: {
   },
 };

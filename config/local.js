@@ -8,8 +8,7 @@ module.exports = {
     clientSecret: '2TpoIfiJg7BeNRsz',
     logLevel: 'error',
   },
-  localURL : 'http://localhost:3000/',
+  localURL : `http://${process.env.HOSTNAME || "localhost"}:3000/`,
   slackWebhooks: {
-    
   },
 };

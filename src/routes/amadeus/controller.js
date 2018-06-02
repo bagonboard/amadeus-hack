@@ -14,33 +14,13 @@ const errors = {
 };
 
 module.exports = {
-  booking,
   test,
-  find,
   chekin,
   mostTraveled,
   lower,
   lowerPrices,
   lowerPricesCache,
 };
-
-async function booking(req, res) {
-  try {
-    // const { surname, bookingCode } = req.body;
-    // const result = await getBooking(surname, bookingCode);
-    // return (result)
-    //   ? res.json(result)
-    //   : res.status(400).json({
-    //     code : 400,
-    //     error: 'No results found.'
-    //   });
-  } catch (error) {
-    // console.error(errors.booking, error.message);
-    // const text = `Iberia scraper fails.\n${errors.booking} \n${error.message}`;
-    // sendToSlack(text);
-    // return res.status(500).json({ code: 500, error: errors.critical });
-  }
-}
 
 async function test(req, res) {
   try {
@@ -66,16 +46,6 @@ async function test(req, res) {
       departureDate: '2018-08-01'
     });
     console.log('mostTravel: ', lowFare.body);
-  } catch (error) {
-    console.error('[ERROR]', error.message);
-  }
-}
-
-async function find(req, res) {
-  try {
-    const { origin, period } = req.body;
-    // Flight Most Traveled Destinations
-    
   } catch (error) {
     console.error('[ERROR]', error.message);
   }
@@ -228,16 +198,6 @@ async function lowerPrices(req, res) {
     }
       // media of the year/month
     const mediaYear = getMediaYear(mediaMonth);
-    // console.log('mediaYear', mediaYear);
-    // const medias = getMediaMonth(mediaMonth);
-    // const response = {
-    //   months,
-    //   origin,
-    //   destination,
-    //   mediaMonth,
-    //   mediaYear,
-    //   // mediaMes: getMedia(mediaDia),
-    // };
     console.timeEnd("lowerPrices");
     return res.status(200).json(response);
   } catch (error) {
@@ -246,7 +206,6 @@ async function lowerPrices(req, res) {
   }
 }
 
-
 async function lower(req, res) {
   try {
     console.time("lower");
@@ -254,12 +213,6 @@ async function lower(req, res) {
     const { origin, destination, year } = req.body;
     const months = getMonths(year);
     const mediaMonth = [];
-    // media de precios por ruta al mes
-    // media de dias 
-    // media de medias diarias
-    
-    // const daysInMonth = moment(departure).daysInMonth();
-    // const daysInMonth = 2;
     
     for (let i = 0; i < months.length; i++) {
       const prices = [];

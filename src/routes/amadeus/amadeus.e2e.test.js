@@ -4,20 +4,19 @@ const { expect } = require('chai');
 const config = require('../../../config');
 const server = require('../../server');
 
-// const { hostname, port } = config.server;
 const URL = config.localURL;
 
 chai.use(chaiHttp);
 
 const checkTimeout = () => new Promise((resolve, reject) => setTimeout(resolve, 2000));
 
-describe('[e2e] /iberia', () => {
+describe('[e2e] /amadeus', () => {
   before(async () => {
     await server(config);
   });
 
   describe('amadeus/test', () => {
-    it.skip('it should POST a city business logic', async () => {
+    it.skip('it should POST a test', async () => {
       const endpoint = 'amadeus/test';
       const query = {}
       try {
@@ -27,23 +26,6 @@ describe('[e2e] /iberia', () => {
           .send(query);
         const { body } = res;
         console.log('::> result <::\n', JSON.stringify(body, null, 2));
-        // const keys = ['paxs', 'flightData', 'flightClass', 'ib_id'];
-        // expect(body).to.be.instanceof(Object);
-        // expect(body).to.contain.keys(keys);
-        // const paxKeys = ['ticketNumber', 'bagsAllowed'];
-        // const { paxs, flightData, ib_id, flightClass } = body;
-        // expect(paxs).to.be.instanceof(Array);
-        // expect(paxs).to.have.length.above(0);
-        // expect(paxs[0]).to.contain.keys(paxKeys);
-        // const flightDataKeys = ['flight', 'flightNumber', 'airline', 'origin', 'destination'];
-        // expect(flightData).to.be.instanceof(Object);
-        // expect(flightData).to.contain.keys(flightDataKeys);
-        // const { origin, destination } = flightData;
-        // const destinyKeys = ['name', 'airport', 'city', 'date', 'terminalNumber'];
-        // expect(origin).to.be.instanceof(Object);
-        // expect(origin).to.contain.keys(destinyKeys);
-        // expect(destination).to.be.instanceof(Object);
-        // expect(destination).to.contain.keys(destinyKeys);
 
       } catch (error) {
         console.error('ERROR', error);
@@ -122,10 +104,10 @@ describe('[e2e] /iberia', () => {
     it('it should POST a lower fare result', async () => {
       const endpoint = 'amadeus/lowerPrices';
       // const cities = ['BCN', 'PAR', 'LON', 'TCI'];
-      // const cities = ['NYC'];
+      const cities = ['NYC'];
       // const cities = ['BRU', 'UIO'];
       // const cities = ['DXB'];
-      const cities = ['SDQ', 'OPO'];
+      // const cities = ['SDQ', 'OPO'];
       // const cities = ['BCN', 'PAR', 'LON', 'TCI', 'NYC', 'BRU', 'UIO', 'DXB', 'SDQ', 'OPO'];
       const result = [];
       try {
@@ -145,7 +127,7 @@ describe('[e2e] /iberia', () => {
           result.push(body);
         }
         console.log(':: RESULT ::\n', result);
-        console.log('------------\n', result);
+        console.log('------------\n');
         console.log(':: RESULT ::\n', JSON.stringify(result, null, 2));
         
       } catch (error) {
