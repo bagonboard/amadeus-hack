@@ -134,21 +134,46 @@ async function mostTraveled(req, res) {
   }
 }
 
+function getMonths(year) {
+  const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+  const actualMonth = moment().month();
+  const result = [];
+  for (let i = actualMonth; i < months.length; i++) {
+    const newDate = `${year}-${months[i]}`;
+    result.push(newDate);
+  }
+  if (actualMonth !== 0) {
+    const newYear = parseInt(year) + 1;
+    for (let i = 0; i < actualMonth; i++) {
+      const newDate = `${newYear}-${months[i]}`;
+      result.push(newDate);
+    }
+  }
+  return result;
+}
+
 async function lower(req, res) {
   try {
     console.time("lower");
-    const { origin, destination, departure } = req.body;
-    const mediaDia = [];
+    // const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    const { origin, destination, year } = req.body;
+    const months = getMonths(year);
+    const mediaMes = [];
     // media de precios por ruta al mes
     // media de dias 
     // media de medias diarias
     
     // const daysInMonth = moment(departure).daysInMonth();
-    const daysInMonth = 2;
+    // const daysInMonth = 2;
     
-    for (let i = 1; i <= daysInMonth; i++) {
+    for (let i = 0; i < months.length; i++) {
       const prices = [];
-      const departureDate = `${departure}-${(i<10) ? '0'+i : i}`;
+      const departure = months[i];
+      const daysInMonth = moment(departure).daysInMonth();
+
+      const dayRandom = Math.floor(Math.random() * daysInMonth);
+
+      const departureDate = `${departure}-${(dayRandom<10) ? '0'+dayRandom : dayRandom}`;
       console.log(origin, destination, departureDate);
       console.time("amadeus");
       const lowFare = await amadeus.shopping.flightOffers.get({
@@ -166,21 +191,22 @@ async function lower(req, res) {
       // console.log('prices length', prices.length);
       const media = getMedia(prices);
       // console.log('media', media);
-      mediaDia.push(media);
-      // console.log('mediaDia', mediaDia);
+      mediaMes.push(media);
+      // console.log('mediaMes', mediaMes);
     }
-    const medias = getMediaMes(mediaDia);
+    const medias = getMediaMes(mediaMes);
     const response = {
       origin,
       destination,
-      mediaDia,
-      mediaMes: medias,
+      mediaMes,
+      mediaAno: medias,
       // mediaMes: getMedia(mediaDia),
     };
     console.timeEnd("lower");
     return res.status(200).json(response);
   } catch (error) {
     console.error('[ERROR]', error.message);
+    res.status(500).end();
   }
 }
 

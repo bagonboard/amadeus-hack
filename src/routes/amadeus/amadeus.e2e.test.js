@@ -101,7 +101,8 @@ describe('[e2e] /iberia', () => {
       const query = {
         origin     : 'MAD',
         destination: 'PAR',
-        departure  : '2018-08',
+        year       : '2018'
+        // departure  : '2018-08',
       };
       try {
         const res = await chai
