@@ -1,6 +1,8 @@
 const bodyParser = require('body-parser');
 const app        = require('express')();
 const routes     = require('../src/routes');
+const favicon = require('serve-favicon');
+const path = require('path');
 
 module.exports = initServer;
 
@@ -8,6 +10,9 @@ async function initServer(Config) {
   console.info(':: Init server ::');
   try {
     const { hostname, port } = Config.server;
+    app.use(favicon(path.join(Config.root, 'client', 'favicon.ico')));
+    app.get('/', (req, res) => res.send('hello world! amadeus hack'));
+  
     app.use(bodyParser.json({
       limit: '1mb',
     }));
