@@ -1,5 +1,6 @@
 const bodyParser = require('body-parser');
 const app        = require('express')();
+const cors       = require('cors');
 const routes     = require('../src/routes');
 const favicon    = require('serve-favicon');
 const path       = require('path');
@@ -10,6 +11,7 @@ async function initServer(Config) {
   console.info(':: Init server ::');
   try {
     const { hostname, port } = Config.server;
+    app.use(cors());
     app.use(favicon(path.join(Config.root, 'client', 'favicon.ico')));
     app.get('/', (req, res) => res.send('hello world! amadeus hack'));
   
