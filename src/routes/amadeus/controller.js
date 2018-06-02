@@ -1,5 +1,6 @@
 // const { sendToSlack } = require('../../services/slack');
 const Amadeus = require('amadeus');
+const moment = require('moment');
 const config = require('../../../config');
 
 console.log(config.amadeus);
@@ -18,6 +19,7 @@ module.exports = {
   find,
   chekin,
   mostTraveled,
+  lower,
 };
 
 async function booking(req, res) {
@@ -119,7 +121,7 @@ async function mostTraveled(req, res) {
       resultTotal.push(result);
       await checkTimeout();
     }
-    console.log('resultTotal', JSON.stringify(resultTotal, null, 2));
+    // console.log('resultTotal', JSON.stringify(resultTotal, null, 2));
     const response = {
       months,
       travels: resultTotal,
@@ -132,4 +134,79 @@ async function mostTraveled(req, res) {
   }
 }
 
+async function lower(req, res) {
+  try {
+    console.time("lower");
+    const { origin, destination, departure } = req.body;
+    const mediaDia = [];
+    // media de precios por ruta al mes
+    // media de dias 
+    // media de medias diarias
+    
+    // const daysInMonth = moment(departure).daysInMonth();
+    const daysInMonth = 2;
+    
+    for (let i = 1; i <= daysInMonth; i++) {
+      const prices = [];
+      const departureDate = `${departure}-${(i<10) ? '0'+i : i}`;
+      console.log(origin, destination, departureDate);
+      console.time("amadeus");
+      const lowFare = await amadeus.shopping.flightOffers.get({
+        origin,
+        destination,
+        departureDate,
+      });
+      console.timeEnd("amadeus");
+      const { data } = lowFare;
+      data.forEach(item => {
+        const { services, price, pricePerAdult } = item.offerItems[0];
+        prices.push(parseInt(price.total));
+      });
+      // console.log('prices', prices);
+      // console.log('prices length', prices.length);
+      const media = getMedia(prices);
+      // console.log('media', media);
+      mediaDia.push(media);
+      // console.log('mediaDia', mediaDia);
+    }
+    const medias = getMediaMes(mediaDia);
+    const response = {
+      mediaDia,
+      mediaMes: medias,
+      // mediaMes: getMedia(mediaDia),
+    };
+    console.timeEnd("lower");
+    return res.status(200).json(response);
+  } catch (error) {
+    console.error('[ERROR]', error.message);
+  }
+}
 
+function getMedia(object) {
+  let total = 0;
+  object.forEach(item => {
+    const vaule = parseInt(item);
+    total += vaule;
+  });
+  const result = (total / object.length).toFixed(2);
+  return parseInt(result);
+}
+
+function getMediaMes(object) {
+  let total = 0;
+  let max = 0;
+  let min = 0;
+  object.forEach(item => {
+    const vaule = parseInt(item);
+    total += parseInt(vaule);
+    if (max < vaule) max = vaule;
+    if (min === 0 || min > vaule) min = vaule;
+  });
+  const totalPrice = (total / object.length).toFixed(2);
+  const result = {
+    max,
+    min,
+    media: parseInt(totalPrice),
+  }
+  return result;
+}

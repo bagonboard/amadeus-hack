@@ -16,7 +16,7 @@ describe('[e2e] /iberia', () => {
     await server(config);
   });
 
-  describe('/test', () => {
+  describe('amadeus/test', () => {
     it.skip('it should POST a city business logic', async () => {
       const endpoint = 'amadeus/test';
       const query = {}
@@ -51,7 +51,7 @@ describe('[e2e] /iberia', () => {
       }
     });
   });
-  describe('/checkin', () => {
+  describe('amadeus/checkin', () => {
     it.skip('it should POST a ', async () => {
       const endpoint = 'amadeus/chekin';
       const query = {}
@@ -71,8 +71,8 @@ describe('[e2e] /iberia', () => {
     });
   });
 
-  describe('/mostTraveled', () => {
-    it('it should POST a ', async () => {
+  describe('amadeus/mostTraveled', () => {
+    it.skip('it should POST a ', async () => {
       const endpoint = 'amadeus/mostTraveled';
       const query = {
         origin: 'MAD',
@@ -84,14 +84,40 @@ describe('[e2e] /iberia', () => {
           .post(endpoint)
           .send(query);
         const { body } = res;
-        // console.log('::> mostTraveled <::\n', JSON.stringify(body, null, 2));
-        console.log('::> mostTraveled <::\n', body);
+        console.log('::> mostTraveled <::\n', JSON.stringify(body, null, 2));
+        // console.log('::> mostTraveled <::\n', body);
 
       } catch (error) {
         console.error('ERROR', error);
         expect(error).to.not.exist();
       }
-    }).timeout(50000);
+    })
+    // .timeout(50000);
+  });
+
+  describe('amadeus/lower', () => {
+    it('it should POST a lower fare result', async () => {
+      const endpoint = 'amadeus/lower';
+      const query = {
+        origin     : 'MAD',
+        destination: 'PAR',
+        departure  : '2018-08',
+      };
+      try {
+        const res = await chai
+          .request(URL)
+          .post(endpoint)
+          .send(query);
+        const { body } = res;
+        // console.log('::> lower <::\n', JSON.stringify(body, null, 2));
+        console.log('::> lower <::\n', body);
+
+      } catch (error) {
+        console.error('ERROR', error);
+        expect(error).to.not.exist();
+      }
+    })
+    .timeout(120000);
   });
   // describe('/validateIberia', () => {
   //   it('it should POST to /validateIberia and return a success response', async () => {
