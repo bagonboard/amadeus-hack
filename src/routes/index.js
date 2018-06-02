@@ -1,6 +1,9 @@
 const amadeusEndpoints = require('./amadeus');
+import favicon from 'serve-favicon';
+import path from 'path';
 
 module.exports = (app) => {
+  app.use(favicon(path.join(config.root, 'client', 'favicon.ico')));
   app.get('/', (req, res) => res.send('hello world! amadeus hack'));
   [
     {

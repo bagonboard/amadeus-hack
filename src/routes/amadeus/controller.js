@@ -171,6 +171,8 @@ async function lower(req, res) {
     }
     const medias = getMediaMes(mediaDia);
     const response = {
+      origin,
+      destination,
       mediaDia,
       mediaMes: medias,
       // mediaMes: getMedia(mediaDia),
