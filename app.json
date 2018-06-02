@@ -1,0 +1,7 @@
+{
+  "name": "amadeus-hack",
+  "description": "hackaton",
+  "repository": "https://github.com/bagonboard/amadeus-hack",
+  "keywords": ["node", "express", "heroku"],
+  "image": "heroku/nodejs"
+}

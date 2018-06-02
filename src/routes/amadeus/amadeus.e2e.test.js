@@ -74,7 +74,10 @@ describe('[e2e] /iberia', () => {
   describe('/mostTraveled', () => {
     it('it should POST a ', async () => {
       const endpoint = 'amadeus/mostTraveled';
-      const query = {}
+      const query = {
+        origin: 'MAD',
+        year  : '2017'
+      };
       try {
         const res = await chai
           .request(URL)

@@ -13,10 +13,3 @@ module.exports = {
     
   },
 };
-
-/*
-{
-    key   : 'N0ADmAT5uBGNA756tDFq7GtzXp0ErHG7',
-    secret: 'ag2Yr8kxS0GZrsKI',
-  },
-  */
