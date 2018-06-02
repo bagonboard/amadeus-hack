@@ -16,10 +16,8 @@ describe('[e2e] /iberia', () => {
     await server(config);
   });
 
-  let auxObject;
-
   describe('/test', () => {
-    it('it should POST a city business logic', async () => {
+    it.skip('it should POST a city business logic', async () => {
       const endpoint = 'amadeus/test';
       const query = {}
       try {
@@ -54,8 +52,8 @@ describe('[e2e] /iberia', () => {
     });
   });
   describe('/checkin', () => {
-    it('it should POST a ', async () => {
-      const endpoint = 'amadeus/checkin';
+    it.skip('it should POST a ', async () => {
+      const endpoint = 'amadeus/chekin';
       const query = {}
       try {
         const res = await chai
@@ -63,13 +61,34 @@ describe('[e2e] /iberia', () => {
           .post(endpoint)
           .send(query);
         const { body } = res;
-        console.log('::> checkin <::\n', JSON.stringify(body, null, 2));
+        // console.log('::> checkin <::\n', JSON.stringify(body, null, 2));
+        console.log('::> checkin <::\n', body);
 
       } catch (error) {
         console.error('ERROR', error);
         expect(error).to.not.exist();
       }
     });
+  });
+
+  describe('/mostTraveled', () => {
+    it('it should POST a ', async () => {
+      const endpoint = 'amadeus/mostTraveled';
+      const query = {}
+      try {
+        const res = await chai
+          .request(URL)
+          .post(endpoint)
+          .send(query);
+        const { body } = res;
+        // console.log('::> mostTraveled <::\n', JSON.stringify(body, null, 2));
+        console.log('::> mostTraveled <::\n', body);
+
+      } catch (error) {
+        console.error('ERROR', error);
+        expect(error).to.not.exist();
+      }
+    }).timeout(50000);
   });
   // describe('/validateIberia', () => {
   //   it('it should POST to /validateIberia and return a success response', async () => {

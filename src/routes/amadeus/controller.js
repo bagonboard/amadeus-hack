@@ -5,6 +5,7 @@ const config = require('../../../config');
 console.log(config.amadeus);
 
 const amadeus = new Amadeus(config.amadeus);
+const checkTimeout = () => new Promise((resolve, reject) => setTimeout(resolve, 1000));
 
 const errors = {
   booking : '[ERROR in booking]: ',
@@ -16,6 +17,7 @@ module.exports = {
   test,
   find,
   chekin,
+  mostTraveled,
 };
 
 async function booking(req, res) {
@@ -82,7 +84,7 @@ async function chekin(req, res) {
     const flightCheckin = await amadeus.referenceData.urls.checkinLinks.get({
       airline : 'LH'
     });
-    console.log('flightCheckin: ', flightCheckin);
+    console.log('flightCheckin: ', flightCheckin.body);
     
     return res.status(200).json(flightCheckin.body);
   } catch (error) {
@@ -90,3 +92,42 @@ async function chekin(req, res) {
     return res.status(500).json({ code: 500, error: 'Somethig bad happen' });    
   }
 }
+
+async function mostTraveled(req, res) {
+  try {
+    // const { origin, period } = req.body;
+    const year = '2017'
+    const months = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'];
+    const resultTotal = [];
+
+    for (let i = 0; i < months.length; i++) {
+      const request = {
+        origin: 'MAD',
+        period: `${year}-${months[i]}`,
+      };
+      const mostTravel = await amadeus.travel.analytics.airTraffic.traveled.get(request);
+      const { data } = mostTravel;
+      console.log('data', data);
+      // console.log('mostTravel', mostTravel);
+      const result = {};
+      result[months[i]] = [];
+      data.forEach(item => {
+        const element = {};
+        element[item.destination] = item.analytics.flights.score * item.analytics.travellers.score;
+        result[months[i]].push(element);
+      });
+      console.log('result', result);
+      resultTotal.push(result);
+      await checkTimeout();
+    }
+    console.log('resultTotal', JSON.stringify(resultTotal, null, 2));
+    
+    // console.log('mostTraveled: ', mostTravel.body);
+    return res.status(200).json(resultTotal);
+  } catch (error) {
+    console.error('[ERROR]', error);
+    return res.status(500).json({ code: 500, error: 'Somethig bad happen' });    
+  }
+}
+
+
